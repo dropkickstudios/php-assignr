@@ -1,36 +1,47 @@
 <?php 
 
-  // http://developer.yahoo.com/php/howto-cacheRestPhp.html
-  // this function is used to cache a response to the file system, avoid hitting the assignr.com API with every request.
-  function request_cache($url, $dest_file, $timeout) { 
-    if (!file_exists("timeout.txt") || filemtime("timeout.txt") < (time()-$timeout)) { 
-      $data = file_get_contents($url); 
-      $tmpf = tempnam('/tmp','YWS'); 
-      $fp = fopen($tmpf,"w"); 
-      fwrite($fp, $data); 
-      fclose($fp); 
-      rename($tmpf, $dest_file);
-      $fp = fopen("timeout.txt","w"); 
-      fwrite($fp, "hello!"); 
-      fclose($fp);  
-      return $data; 
-    } else { 
-      return file_get_contents($dest_file);
-    }
-  }
+  // CONFIGURATION VARIABLES
 
-  // enter your assignr.com user name and API key here.
-  // your API can be found on this page: https://assignr.com/client_applications
+  // $cache_directory should be an empty directory, writeable by web server
+  // should be outside of the document root (not browsable)
+  // omit trailing slash on directory name
+  $cache_directory = "/path/to/writeable/directory";
+
+  // assignr.com user name
+  $username = "your-username-goes-here";
   
-  $username = "your-user-name-goes-here";
-  $api_key = "super-secret-api-key-goes-here";
-
+  // assignr.com API key
+  // your API can be found on this page: https://assignr.com/client_applications
+  $api_key = "your-api-key-goes-here";
+  
   // set some search criteria. you can view any game that you normally have access to, so you may want to limit
   // your search to "future" and "public" games.
   
   $search_criteria= urlencode("in:future is:public");
 
-  $response = request_cache("https://$username:$api_key@api.assignr.com/api/v1/games.json?search=$search_criteria", "games.1.json", 300);
+  // END CONFIGURATION VARIABLES
+
+
+  if(!is_writable($cache_directory)){ die("$cache_directory is not a writeable directory."); }
+
+  // http://developer.yahoo.com/php/howto-cacheRestPhp.html
+  // this function is used to cache a response to the file system, avoid hitting the assignr.com API with every request.
+  function request_cache($url, $timeout) { 
+    $cache_file = $cache_directory . "/" . md5($url);
+    if (!file_exists($cache_file) || filemtime($cache_file) < (time()-$timeout)) { 
+      $data = file_get_contents($url); 
+      $tmpf = tempnam('/tmp','YWS'); 
+      $fp = fopen($tmpf,"w"); 
+      fwrite($fp, $data); 
+      fclose($fp); 
+      rename($tmpf, $cache_file);
+      return $data; 
+    } else { 
+      return file_get_contents($cache_file);
+    }
+  }
+  
+  $response = request_cache("https://$username:$api_key@api.assignr.com/api/v1/games.json?search=$search_criteria", 300);
   $json = json_decode($response);
   $row_class="even";
   $found = false;
@@ -96,7 +107,7 @@
       // make subsequent API calls as needed (for pagination)
       if ($json->page < $json->pages) {
         $page = ($json->page + 1);
-        $response = request_cache("https://$username:$api_key@api.assignr.com/api/v1/games.json?search=$search_criteria&page=$page", "games.$page.json",300);
+        $response = request_cache("https://$username:$api_key@api.assignr.com/api/v1/games.json?search=$search_criteria&page=$page",300);
         $json = json_decode($response);
       } else { 
         $response = false;
@@ -112,3 +123,8 @@
   <p><a href="http://assignr.com">Powered by assignr.com Referee Assigning</a></p>
   </body>
 </html>
+
+
+
+
+

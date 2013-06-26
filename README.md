@@ -5,11 +5,29 @@ This is a starter example showing how to use the [assignr.com API](http://assign
 
 Your web server must support PHP scripting.
 
+This sample script will do the following:
+
+* The assignr.com API limits results to 50 records at a time. This script will make multiple calls to the API and display the results in a single table. 
+* The API calls to assignr.com will be cached on your server for 5 minutes. 
+
 ### get-games.php
 
-* Copy the get-games.php file to your web server
-* The web server should be able to write to the directory.  
-* Modify the $username and $api_key variables 
-* Review the $search_criteria variable. You can limit the games displayed by using the [assignr.com search language](http://assignr.com/help/games/search_games).
-* Modify CSS styles as needed
+The `get-games.php` script will pull game data from your assignr.com site, and display the data in a table. Feel free to add new data elements, modify the CSS, or make changes to fit your needs.
 
+### Setup
+
+* Create a directory on your server that can store the cached content from assignr.com. This file must be writeable by the web server, and should be located outside of your "document root"... you should not be able to view the documents in this folder from a web browser. 
+* Modify the provided script:
+  * Set your user name and API key (`$username` and `$api_key`)
+  * Set the cache directory (`$cache_directory`)
+  * Set the search criteria (`$search_criteria`). You can limit the games displayed by using the [assignr.com search language](http://assignr.com/help/games/search_games).
+  * Modify the HTML and/or CSS as needed
+* Copy the get-games.php file to a directory on your web browser. 
+
+## Modifications
+
+If you have used this to build something creative, feel free to share! We accept pull requests... please add your contribution as a new file, and include any setup instructions for your creation.
+
+## Questions
+
+If you have any questions, please contact [assignr.com support](http://assignr.com/static/contact).
