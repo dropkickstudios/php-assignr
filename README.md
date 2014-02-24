@@ -30,6 +30,8 @@ The `get-games.php` script will pull game data from your assignr.com site, and d
 
 The `create-game.php`, `update-game.php` and `delete-game.php` files provide examples of how to create a new game, update an existing game, and delete an existing game from assignr.com. Each file has a function that builds a response using the PHP Curl library. 
 
+If you are simply using the API to display data, you will not need to use these three files.
+
 When you create, update or delete a game using the API, you will want to ensure that your API call completes successfully. For example, if you create a new game, it must conform to the validation rules as set forth in the assignr.com API documentation. Please consult the [assignr.com API documentation](http://assignr.com/help/api/api-games) for more information.
 
 
