@@ -55,16 +55,15 @@
   $responses[0] = deleteGame($username, $api_key, 2649221);
     
   foreach ($responses as $response){
-    print_r($response);
     if ($response->success){
       echo "Success. Game deleted.\n";
     } else {
-      echo "Failed. Errors are as follows:\n";
-      foreach($response->data->error as $errorObject){
-        echo " => {$errorObject->message} \n"; 
+      echo "Failed with error code {$response->response_code}.\n";
+      if ($response->data){
+        echo " Errors are as follows:\n";
+        foreach($response->data->error as $errorObject){
+          echo " => {$errorObject->message} \n"; 
+        }      
       }      
     }
   }
-
-
-

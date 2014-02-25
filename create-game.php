@@ -72,10 +72,13 @@
     if ($response->success){
       echo "Success. Game ID is " . $response->data->game->id ."\n";
     } else {
-      echo "Failed. Errors are as follows:\n";
-      foreach($response->data->error as $errorObject){
-        echo " => {$errorObject->message} \n"; 
-      }      
+      echo "Failed with error code {$response->response_code}.\n";
+      if ($response->data){
+        echo "Errors are as follows:\n";
+        foreach($response->data->error as $errorObject){
+          echo " => {$errorObject->message} \n"; 
+        }      
+      }
     }
   }
 
